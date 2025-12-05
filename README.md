@@ -360,42 +360,6 @@ Security Features
 
 ---
 
-## 🐛 Troubleshooting
-
-### Database Connection Error
-\`\`\`bash
-# Pastikan MySQL berjalan
-sudo systemctl start mysql
-
-# Cek kredensial di .env
-DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/DB_NAME"
-\`\`\`
-
-### Port Already in Use
-\`\`\`bash
-# Ganti port di .env (backend)
-PORT=5001
-
-# Atau kill proses yang menggunakan port
-# Windows:
-netstat -ano | findstr :5000
-taskkill /PID <PID> /F
-
-# Linux/Mac:
-lsof -ti:5000 | xargs kill
-\`\`\`
-
-### Prisma Migration Issues
-\`\`\`bash
-# Reset database (HATI-HATI: akan hapus semua data!)
-npx prisma migrate reset
-
-# Atau push schema tanpa migration
-npx prisma db push
-\`\`\`
-
----
-
 ## 🔮 Future Development
 
 - [ ] notifications bot chat whatsapp untuk peminjaman terlambat
