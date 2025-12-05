@@ -1,0 +1,350 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  /* Uncomment line below to add background image to entire app */
+  /* background: url('/images/telkom-pattern.png') repeat; */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.sidebar {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  margin: 5px 15px;
+  border-radius: 8px;
+  padding: 12px 15px;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.sidebar .nav-link i {
+  margin-right: 10px;
+  width: 20px;
+}
+
+.main-content {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  /* Uncomment lines below to add background image to main content area */
+  /* background: linear-gradient(rgba(248, 249, 250, 0.9), rgba(248, 249, 250, 0.9)), 
+               url('/images/telkom-watermark.png') center center / contain no-repeat fixed; */
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 15px 20px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.btn-outline-primary {
+  border-color: #dc3545;
+  color: #dc3545;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  transform: translateY(-1px);
+}
+
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 15px;
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(220, 53, 69, 0.05);
+  transform: scale(1.01);
+}
+
+.navbar {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: white !important;
+}
+
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-left: 4px solid #dc3545;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-left-width: 6px;
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.badge {
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-weight: 500;
+}
+
+.badge-borrowed {
+  background-color: #ffc107;
+  color: #856404;
+}
+
+.badge-returned {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-overdue {
+  background-color: #dc3545;
+  color: white;
+}
+
+.form-control:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-select:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(191, 80, 92, 0.8) 0%, rgba(200, 35, 51, 0.8) 100%), 
+              url('images/backgroundlogin.jpg') center center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.login-body {
+  padding: 30px;
+}
+
+.pagination .page-link {
+  color: #dc3545;
+  border-color: #dee2e6;
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+.pagination .page-link:hover {
+  color: white;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #dc3545;
+  border-color: #ffffff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100vh;
+    z-index: 1050;
+    transition: left 0.3s ease;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.empty-state i {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+/* Loan Management Styles */
+.loan-table td {
+  vertical-align: middle;
+  padding: 15px 12px;
+}
+
+.loan-duration {
+  font-size: 0.875em;
+  font-style: italic;
+}
+
+.return-time-container {
+  line-height: 1.4;
+}
+
+.return-time-target {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.return-time-actual {
+  display: block;
+  margin-top: 8px;
+}
+
+.overdue-indicator {
+  animation: pulse 2s infinite;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.loan-info-item {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+.loan-info-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.badge-borrowed {
+  animation: fadeIn 0.3s ease;
+}
+
+.badge-returned {
+  animation: fadeIn 0.3s ease;
+}
+
+.badge-overdue {
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
