@@ -83,7 +83,9 @@ model Loan {
   returnDate        DateTime?
   actualReturnDate  DateTime?
   status            LoanStatus @default(BORROWED)
-  notes             String?
+  notes             String?    // Catatan pengembalian atau catatan umum
+  loanPhoto         String?    // Foto saat peminjaman
+  returnPhoto       String?    // Foto saat pengembalian
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
   isThirdParty      Boolean    @default(false)

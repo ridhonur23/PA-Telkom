@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Button, Table, Form, Row, Col, Badge, Pagination } from 'react-bootstrap';
+import { Card, Button, Table, Form, Row, Col, Badge, Pagination, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import loanService from '../services/loanService';
 import officeService from '../services/officeService';
@@ -14,6 +14,8 @@ const LoanHistory = () => {
   const [pagination, setPagination] = useState({});
   const [offices, setOffices] = useState([]);
   const [users, setUsers] = useState([]);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
   const [stats, setStats] = useState({
     borrowed: 0,
     returned: 0,
@@ -157,6 +159,18 @@ const LoanHistory = () => {
       [key]: value,
       page: 1
     }));
+  };
+
+  // fungsi untuk menampilkan detail peminjaman
+  const handleShowDetail = (loan) => {
+    setSelectedLoan(loan);
+    setShowDetailModal(true);
+  };
+
+  // fungsi untuk menutup modal
+  const handleCloseModal = () => {
+    setShowDetailModal(false);
+    setSelectedLoan(null);
   };
 
   // fungsi untuk menangani perubahan halaman
@@ -381,7 +395,14 @@ const LoanHistory = () => {
                 </thead>
                 <tbody>
                   {loans.map((loan) => (
-                    <tr key={loan.id}>
+                    <tr 
+                      key={loan.id}
+                      style={{ cursor: 'pointer' }}
+                      className="loan-row"
+                      onClick={() => handleShowDetail(loan)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
                       <td>
                         <div>
                           <strong>{loan.asset.name}</strong>
@@ -494,6 +515,264 @@ const LoanHistory = () => {
           </Card.Footer>
         )}
       </Card>
+
+      {/* Modal Detail Peminjaman */}
+      <Modal show={showDetailModal} onHide={handleCloseModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Detail Peminjaman</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedLoan && (
+            <>
+              {console.log('Selected Loan:', selectedLoan)}
+              {console.log('Loan Photo:', selectedLoan.loanPhoto)}
+              {console.log('Return Photo:', selectedLoan.returnPhoto)}
+              {console.log('Notes:', selectedLoan.notes)}
+              <Row>
+              <Col md={12}>
+                <h6 className="text-primary mb-3">
+                  <i className="fas fa-box me-2"></i>
+                  Informasi Asset
+                </h6>
+              </Col>
+              
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Nama Asset</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.asset.name} readOnly />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Kode Asset</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.asset.code} readOnly />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Kategori</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.asset.category.name} readOnly />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Kantor</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.asset.office?.name || '-'} readOnly />
+                </Form.Group>
+              </Col>
+
+              <Col md={12}>
+                <hr />
+                <h6 className="text-primary mb-3">
+                  <i className="fas fa-user me-2"></i>
+                  Informasi Peminjam
+                </h6>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Nama Peminjam</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.borrowerName} readOnly />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">No. Telepon</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.borrowerPhone || '-'} readOnly />
+                </Form.Group>
+              </Col>
+
+              {selectedLoan.isThirdParty && (
+                <>
+                  <Col md={12}>
+                    <Badge bg="info" className="mb-3">
+                      <i className="fas fa-building me-1"></i>
+                      Peminjaman Pihak Ketiga
+                    </Badge>
+                  </Col>
+
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-bold">Nama Organisasi/Perusahaan</Form.Label>
+                      <Form.Control type="text" value={selectedLoan.thirdPartyName || '-'} readOnly />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-bold">Alamat Pihak Ketiga</Form.Label>
+                      <Form.Control type="text" value={selectedLoan.thirdPartyAddress || '-'} readOnly />
+                    </Form.Group>
+                  </Col>
+                </>
+              )}
+
+              <Col md={12}>
+                <hr />
+                <h6 className="text-primary mb-3">
+                  <i className="fas fa-calendar me-2"></i>
+                  Informasi Waktu
+                </h6>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Tanggal Peminjaman</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    value={moment(selectedLoan.loanDate).format('DD/MM/YYYY HH:mm')} 
+                    readOnly 
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Target Pengembalian</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    value={selectedLoan.returnDate ? moment(selectedLoan.returnDate).format('DD/MM/YYYY HH:mm') : '-'} 
+                    readOnly 
+                  />
+                </Form.Group>
+              </Col>
+
+              {selectedLoan.status === 'RETURNED' && selectedLoan.actualReturnDate && (
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold">Tanggal Pengembalian Aktual</Form.Label>
+                    <Form.Control 
+                      type="text" 
+                      value={moment(selectedLoan.actualReturnDate).format('DD/MM/YYYY HH:mm')} 
+                      readOnly 
+                    />
+                  </Form.Group>
+                </Col>
+              )}
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Status</Form.Label>
+                  <div>
+                    {selectedLoan.status === 'BORROWED' && (
+                      <Badge bg="warning">Dipinjam</Badge>
+                    )}
+                    {selectedLoan.status === 'RETURNED' && (
+                      <Badge bg="success">Dikembalikan</Badge>
+                    )}
+                    {selectedLoan.status === 'OVERDUE' && (
+                      <Badge bg="danger">Terlambat</Badge>
+                    )}
+                  </div>
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Diproses Oleh</Form.Label>
+                  <Form.Control type="text" value={selectedLoan.user.fullName} readOnly />
+                </Form.Group>
+              </Col>
+
+              {selectedLoan.purpose && (
+                <Col md={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold">Keperluan</Form.Label>
+                    <Form.Control 
+                      as="textarea" 
+                      rows={2} 
+                      value={selectedLoan.purpose} 
+                      readOnly 
+                    />
+                  </Form.Group>
+                </Col>
+              )}
+
+              {selectedLoan.notes && (
+                <Col md={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold">Catatan Pengembalian</Form.Label>
+                    <Form.Control 
+                      as="textarea" 
+                      rows={2} 
+                      value={selectedLoan.notes} 
+                      readOnly 
+                    />
+                  </Form.Group>
+                </Col>
+              )}
+
+              {(selectedLoan.loanPhoto || selectedLoan.returnPhoto) && (
+                <>
+                  <Col md={12}>
+                    <hr />
+                    <h6 className="text-primary mb-3">
+                      <i className="fas fa-camera me-2"></i>
+                      Dokumentasi Foto
+                    </h6>
+                  </Col>
+
+                  {selectedLoan.loanPhoto && (
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Foto Saat Peminjaman</Form.Label>
+                        <div>
+                          <img 
+                            src={`http://localhost:5000${selectedLoan.loanPhoto}`}
+                            alt="Loan" 
+                            style={{ 
+                              maxWidth: '100%', 
+                              maxHeight: '300px',
+                              objectFit: 'contain',
+                              borderRadius: '8px',
+                              border: '2px solid #dee2e6',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => window.open(`http://localhost:5000${selectedLoan.loanPhoto}`, '_blank')}
+                          />
+                        </div>
+                      </Form.Group>
+                    </Col>
+                  )}
+
+                  {selectedLoan.returnPhoto && (
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Foto Saat Pengembalian</Form.Label>
+                        <div>
+                          <img 
+                            src={`http://localhost:5000${selectedLoan.returnPhoto}`}
+                            alt="Return" 
+                            style={{ 
+                              maxWidth: '100%', 
+                              maxHeight: '300px',
+                              objectFit: 'contain',
+                              borderRadius: '8px',
+                              border: '2px solid #dee2e6',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => window.open(`http://localhost:5000${selectedLoan.returnPhoto}`, '_blank')}
+                          />
+                        </div>
+                      </Form.Group>
+                    </Col>
+                  )}
+                </>
+              )}
+            </Row>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Tutup
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       
     </div>

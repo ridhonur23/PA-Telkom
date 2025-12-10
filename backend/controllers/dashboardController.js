@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 // Mendapatkan statistik untuk dashboard
 exports.getDashboardStats = async (req, res) => {
   try {
-    console.log('[Dashboard] getDashboardStats', { userId: req.user.id, role: req.user.role });
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -136,7 +135,6 @@ exports.getDashboardStats = async (req, res) => {
 // Mendapatkan data chart peminjaman harian
 exports.getLoansChart = async (req, res) => {
   try {
-    console.log('[Dashboard] getLoansChart', { userId: req.user.id, role: req.user.role });
     const days = [];
     const loansData = [];
 

@@ -215,14 +215,14 @@ const AssetManagement = () => {
         <div>
           <h2>Manajemen Asset</h2>
           <p className="text-muted mb-0">
-            {user?.role === 'ADMIN' 
+            {(user?.role === 'ADMIN' || user?.role === 'MANAGEMENT')
               ? 'Kelola Aset kantor'
               : 'Lihat Aset'
             }
             {user?.office && ` - ${user.office.name}`}
           </p>
         </div>
-        {user?.role === 'ADMIN' && (
+        {(user?.role === 'ADMIN' || user?.role === 'MANAGEMENT') && (
           <Button variant="primary" onClick={() => handleShowModal()}>
             <i className="fas fa-plus me-2"></i>
             Tambah Asset
@@ -254,7 +254,7 @@ const AssetManagement = () => {
                 ))}
               </Form.Select>
             </Col>
-            {user?.role === 'ADMIN' && (
+            {(user?.role === 'ADMIN' || user?.role === 'MANAGEMENT') && (
               <Col md={2}>
                 <Form.Select
                   value={filters.officeId}
@@ -269,7 +269,7 @@ const AssetManagement = () => {
                 </Form.Select>
               </Col>
             )}
-            {user?.role === 'ADMIN' && (
+            {(user?.role === 'ADMIN' || user?.role === 'MANAGEMENT') && (
               <Col md={2}>
                 <Form.Select
                   value={filters.isAvailable || ''}
@@ -329,7 +329,7 @@ const AssetManagement = () => {
                         <small>{asset.description || '-'}</small>
                       </td>
                       <td>
-                        {user?.role === 'ADMIN' && (
+                        {(user?.role === 'ADMIN' || user?.role === 'MANAGEMENT') && (
                           <div className="btn-group" role="group">
                             <Button
                               variant="outline-primary"

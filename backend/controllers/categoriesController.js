@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 exports.getAllCategories = async (req, res) => {
   try {
     const { search = '', type = '', isActive } = req.query;
-    console.log('[Categories] getAllCategories', { userId: req.user.id, role: req.user.role, search, type });
     const where = {
       AND: [
         search ? {
@@ -41,7 +40,6 @@ exports.getAllCategories = async (req, res) => {
 exports.getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Categories] getCategoryById', { userId: req.user.id, role: req.user.role, categoryId: id });
     const category = await prisma.category.findUnique({
       where: { id: parseInt(id) },
       include: {
@@ -76,7 +74,6 @@ exports.createCategory = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, type, description, allowedRoles } = req.body;
-    console.log('[Categories] createCategory', { userId: req.user.id, role: req.user.role, name, type });
     const existingCategory = await prisma.category.findUnique({ where: { name } });
     if (existingCategory) {
       return res.status(400).json({ error: 'Kategori dengan nama ini sudah ada' });
@@ -105,7 +102,6 @@ exports.updateCategory = async (req, res) => {
     }
     const { id } = req.params;
     const { name, type, description, isActive } = req.body;
-    console.log('[Categories] updateCategory', { userId: req.user.id, role: req.user.role, categoryId: id, name });
     const existingCategory = await prisma.category.findUnique({ where: { id: parseInt(id) } });
     if (!existingCategory) {
       return res.status(404).json({ error: 'Kategori tidak ditemukan' });
@@ -144,7 +140,6 @@ exports.updateCategory = async (req, res) => {
 exports.deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Categories] deleteCategory', { userId: req.user.id, role: req.user.role, categoryId: id });
     const existingCategory = await prisma.category.findUnique({ where: { id: parseInt(id) } });
     if (!existingCategory) {
       return res.status(404).json({ error: 'Kategori tidak ditemukan' });

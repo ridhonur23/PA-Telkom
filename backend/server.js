@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 
 // Import routes
@@ -24,6 +25,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files untuk uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -65,7 +69,7 @@ process.on('SIGINT', async () => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server berjalan pada port ${PORT}`);
-  // console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  // console.log(`🔗 API Health: http://localhost:${PORT}/api/health`);
+  console.log(`Server berjalan pada port ${PORT}`);
+  // console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  // console.log(`API Health: http://localhost:${PORT}/api/health`);
 });

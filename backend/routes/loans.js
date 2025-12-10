@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { authenticateToken, requireAnyRole } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const loansController = require('../controllers/loansController');
 
 const router = express.Router();
@@ -14,8 +15,8 @@ router.get('/export/xlsx', authenticateToken, requireAnyRole, loansController.ex
 // mendapatkan pinjaman berdasarkan ID
 router.get('/:id', authenticateToken, requireAnyRole, loansController.getLoanById);
 
-// buat pinjaman (hanya security guard yang dapat mengakses)
-router.post('/', authenticateToken, requireAnyRole, [
+// buat pinjaman dengan foto (hanya security guard yang dapat mengakses)
+router.post('/', authenticateToken, requireAnyRole, upload.single('loanPhoto'), [
   body('assetId').isInt({ min: 1 }).withMessage('ID aset yang valid diperlukan'),
   body('borrowerName').trim().notEmpty().withMessage('Nama peminjam diperlukan'),
   body('borrowerPhone').optional().trim(),
@@ -23,8 +24,8 @@ router.post('/', authenticateToken, requireAnyRole, [
   body('returnDate').optional().isISO8601().withMessage('Tanggal pengembalian harus berupa tanggal yang valid')
 ], loansController.createLoan);
 
-// Kembalikan aset
-router.patch('/:id/return', authenticateToken, requireAnyRole, [
+// Kembalikan aset dengan foto
+router.patch('/:id/return', authenticateToken, requireAnyRole, upload.single('returnPhoto'), [
   body('notes').optional().trim()
 ], loansController.returnAsset);
 

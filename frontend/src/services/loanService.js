@@ -14,15 +14,44 @@ const loanService = {
     return response.data;
   },
 
-  // membuat pinjaman baru
+  // membuat pinjaman baru dengan foto
   createLoan: async (loanData) => {
-    const response = await api.post('/loans', loanData);
+    const formData = new FormData();
+    
+    // Tambahkan semua field ke FormData
+    Object.keys(loanData).forEach(key => {
+      if (loanData[key] !== null && loanData[key] !== undefined) {
+        formData.append(key, loanData[key]);
+      }
+    });
+    
+    const response = await api.post('/loans', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   },
 
-  // memperbarui pinjaman
-  returnAsset: async (id, notes) => {
-    const response = await api.patch(`/loans/${id}/return`, { notes });
+  // pengembalian aset dengan foto
+  returnAsset: async (id, returnData) => {
+    const formData = new FormData();
+    
+    // Tambahkan notes jika ada
+    if (returnData.notes) {
+      formData.append('notes', returnData.notes);
+    }
+    
+    // Tambahkan foto jika ada
+    if (returnData.returnPhoto) {
+      formData.append('returnPhoto', returnData.returnPhoto);
+    }
+    
+    const response = await api.patch(`/loans/${id}/return`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   },
 

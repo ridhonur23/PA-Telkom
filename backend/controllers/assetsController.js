@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 exports.getAllAssets = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '', categoryId = '', officeId = '', isAvailable, isActive } = req.query;
-    console.log('[Assets] getAllAssets', { userId: req.user.id, role: req.user.role, page, search, categoryId, officeId });
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     // Filter berdasarkan kantor untuk Security Guard
@@ -71,7 +70,6 @@ exports.getAllAssets = async (req, res) => {
 
   } catch (error) {
     console.error('Error Mendapatkan Semua Asset:', error);
-    console.log(error);
     res.status(500).json({ error: 'Kesalahan server internal' });
   }
 };
@@ -79,7 +77,6 @@ exports.getAllAssets = async (req, res) => {
 exports.getAssetById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Assets] getAssetById', { userId: req.user.id, role: req.user.role, assetId: id });
     const where = { id: parseInt(id) };
 
     // Filter kantor untuk Security Guard
@@ -136,7 +133,6 @@ exports.createAsset = async (req, res) => {
     }
 
     const { name, code, categoryId, officeId, description } = req.body;
-    console.log('[Assets] createAsset', { userId: req.user.id, role: req.user.role, name, code, categoryId, officeId });
 
     // Cek jika kode aset sudah ada
     const existingAsset = await prisma.asset.findUnique({
@@ -196,7 +192,6 @@ exports.updateAsset = async (req, res) => {
 
     const { id } = req.params;
     const { name, code, categoryId, officeId, description, isAvailable, isActive } = req.body;
-    console.log('[Assets] updateAsset', { userId: req.user.id, role: req.user.role, assetId: id, name, code });
 
     // Cek jika aset ada
     const existingAsset = await prisma.asset.findUnique({
@@ -276,7 +271,6 @@ exports.updateAsset = async (req, res) => {
 exports.deleteAsset = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Assets] deleteAsset', { userId: req.user.id, role: req.user.role, assetId: id });
 
     // Cek jika aset ada
     const existingAsset = await prisma.asset.findUnique({

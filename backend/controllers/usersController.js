@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 exports.getAllUsers = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '', role = '', officeId = '' } = req.query;
-    console.log('[Users] getAllUsers', { requesterId: req.user.id, requesterRole: req.user.role, page, search, role, officeId });
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const where = {
@@ -57,7 +56,6 @@ exports.getAllUsers = async (req, res) => {
 // mendapatkan profil user
 exports.getUserProfile = async (req, res) => {
   try {
-    console.log('[Users] getUserProfile', { userId: req.user.id, role: req.user.role });
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
       include: { office: true }
@@ -85,7 +83,6 @@ exports.createUser = async (req, res) => {
     }
 
     const { nik, username, password, fullName, role, officeId } = req.body;
-    console.log('[Users] createUser', { creatorId: req.user.id, creatorRole: req.user.role, newUserRole: role, username });
 
     // Periksa apakah pengguna sudah ada
     const existingUser = await prisma.user.findFirst({
@@ -140,7 +137,6 @@ exports.updateUser = async (req, res) => {
 
     const { id } = req.params;
     const { nik, username, password, fullName, role, officeId, isActive } = req.body;
-    console.log('[Users] updateUser', { updaterId: req.user.id, updaterRole: req.user.role, targetUserId: id, username });
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -215,7 +211,6 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Users] deleteUser', { deleterId: req.user.id, deleterRole: req.user.role, targetUserId: id });
 
     // cek apakah user ada
     const existingUser = await prisma.user.findUnique({

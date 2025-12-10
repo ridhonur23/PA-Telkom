@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 exports.getAllOffices = async (req, res) => {
   try {
     const { search = '', isActive } = req.query;
-    console.log('[Offices] getAllOffices', { userId: req.user.id, role: req.user.role, search });
     const where = {
       AND: [
         search ? {
@@ -41,7 +40,6 @@ exports.getAllOffices = async (req, res) => {
 exports.getOfficeById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Offices] getOfficeById', { userId: req.user.id, role: req.user.role, officeId: id });
     const office = await prisma.office.findUnique({
       where: { id: parseInt(id) },
       include: {
@@ -86,7 +84,6 @@ exports.createOffice = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, address } = req.body;
-    console.log('[Offices] createOffice', { userId: req.user.id, role: req.user.role, name });
     const existingOffice = await prisma.office.findUnique({ where: { name } });
     if (existingOffice) {
       return res.status(400).json({ error: 'Kantor dengan nama ini sudah ada' });
@@ -113,7 +110,6 @@ exports.updateOffice = async (req, res) => {
     }
     const { id } = req.params;
     const { name, address, isActive } = req.body;
-    console.log('[Offices] updateOffice', { userId: req.user.id, role: req.user.role, officeId: id, name });
     const existingOffice = await prisma.office.findUnique({ where: { id: parseInt(id) } });
     if (!existingOffice) {
       return res.status(404).json({ error: 'Kantor tidak ditemukan' });
@@ -150,7 +146,6 @@ exports.updateOffice = async (req, res) => {
 exports.deleteOffice = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Offices] deleteOffice', { userId: req.user.id, role: req.user.role, officeId: id });
     const existingOffice = await prisma.office.findUnique({ where: { id: parseInt(id) } });
     if (!existingOffice) {
       return res.status(404).json({ error: 'Kantor tidak ditemukan' });

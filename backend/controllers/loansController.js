@@ -28,8 +28,6 @@ exports.getAllLoans = async (req, res) => {
       ? req.user.officeId 
       : (officeId ? parseInt(officeId) : null);
 
-    console.log('Loan filters:', { officeId, effectiveOfficeId, role: req.user.role, userOfficeId: req.user.officeId });
-
     const where = {
       AND: [
         search ? {
@@ -98,7 +96,6 @@ exports.getAllLoans = async (req, res) => {
 exports.getLoanById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Loans] getLoanById', { userId: req.user.id, role: req.user.role, loanId: id });
     const where = { id: parseInt(id) };
     
     // filter berdasarkan kantor untuk security guard
@@ -145,7 +142,12 @@ exports.createLoan = async (req, res) => {
     }
 
     const { assetId, borrowerName, borrowerPhone, purpose, returnDate, isThirdParty, thirdPartyName, thirdPartyAddress } = req.body;
-    console.log('[Loans] createLoan', { userId: req.user.id, role: req.user.role, assetId, borrowerName, isThirdParty });
+
+    // Ambil foto jika ada
+    const loanPhoto = req.file ? `/uploads/loans/${req.file.filename}` : null;
+
+    // Konversi isThirdParty dari string ke boolean (karena FormData mengirim semua sebagai string)
+    const isThirdPartyBool = isThirdParty === 'true' || isThirdParty === true;
 
     // cek apakah asset ada dan tersedia
     const asset = await prisma.asset.findUnique({
@@ -191,9 +193,10 @@ exports.createLoan = async (req, res) => {
         borrowerPhone: borrowerPhone || null,
         purpose: purpose || null,
         returnDate: returnDate ? new Date(returnDate) : null,
-        isThirdParty: isThirdParty || false,
-        thirdPartyName: isThirdParty ? thirdPartyName : null,
-        thirdPartyAddress: isThirdParty ? thirdPartyAddress : null
+        isThirdParty: isThirdPartyBool,
+        thirdPartyName: isThirdPartyBool ? thirdPartyName : null,
+        thirdPartyAddress: isThirdPartyBool ? thirdPartyAddress : null,
+        loanPhoto: loanPhoto
       },
       include: {
         asset: {
@@ -234,7 +237,9 @@ exports.returnAsset = async (req, res) => {
   try {
     const { id } = req.params;
     const { notes } = req.body;
-    console.log('[Loans] returnAsset', { userId: req.user.id, role: req.user.role, loanId: id });
+
+    // Ambil foto pengembalian jika ada
+    const returnPhoto = req.file ? `/uploads/loans/${req.file.filename}` : null;
 
     const where = { id: parseInt(id) };
     
@@ -263,7 +268,8 @@ exports.returnAsset = async (req, res) => {
       data: {
         status: 'RETURNED',
         actualReturnDate: new Date(),
-        notes: notes || null
+        notes: notes || null,
+        returnPhoto: returnPhoto
       },
       include: {
         asset: {
@@ -303,7 +309,6 @@ exports.returnAsset = async (req, res) => {
 exports.markAsOverdue = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('[Loans] markAsOverdue', { userId: req.user.id, role: req.user.role, loanId: id });
 
     const loan = await prisma.loan.findUnique({
       where: { id: parseInt(id) },
@@ -354,7 +359,6 @@ exports.markAsOverdue = async (req, res) => {
 exports.exportToXLSX = async (req, res) => {
   try {
     const { startDate = '', endDate = '', status = '', officeId = '', userId = '' } = req.query;
-    console.log('[Loans] exportToXLSX', { exporterId: req.user.id, role: req.user.role, status, officeId, userId });
 
     // Tentukan officeId yang akan digunakan untuk filter
     // Security guard hanya bisa melihat data dari kantornya sendiri
