@@ -38,6 +38,9 @@ const LoanManagement = () => {
   });
 
   const [loanPhotoPreview, setLoanPhotoPreview] = useState(null);
+  const [showLoanCamera, setShowLoanCamera] = useState(false);
+  const [loanVideoRef, setLoanVideoRef] = useState(null);
+  const [loanStream, setLoanStream] = useState(null);
 
   const [returnForm, setReturnForm] = useState({
     notes: '',
@@ -45,6 +48,9 @@ const LoanManagement = () => {
   });
 
   const [returnPhotoPreview, setReturnPhotoPreview] = useState(null);
+  const [showReturnCamera, setShowReturnCamera] = useState(false);
+  const [returnVideoRef, setReturnVideoRef] = useState(null);
+  const [returnStream, setReturnStream] = useState(null);
 
   // fungsi untuk memuat data peminjaman
   const loadLoans = useCallback(async () => {
@@ -136,6 +142,10 @@ const LoanManagement = () => {
 
   // fungsi untuk menutup modal
   const handleCloseModal = () => {
+    // Stop kamera jika masih aktif
+    stopLoanCamera();
+    stopReturnCamera();
+    
     setShowModal(false);
     setShowReturnModal(false);
     setShowDetailModal(false);
@@ -177,6 +187,45 @@ const LoanManagement = () => {
     }
   };
 
+  // fungsi untuk membuka kamera loan
+  const startLoanCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      setLoanStream(stream);
+      setShowLoanCamera(true);
+    } catch (error) {
+      toast.error('Tidak dapat mengakses kamera');
+      console.error('Error accessing camera:', error);
+    }
+  };
+
+  // fungsi untuk mengambil foto dari kamera loan
+  const captureLoanPhoto = () => {
+    if (loanVideoRef) {
+      const canvas = document.createElement('canvas');
+      canvas.width = loanVideoRef.videoWidth;
+      canvas.height = loanVideoRef.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(loanVideoRef, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'loan-photo.jpg', { type: 'image/jpeg' });
+        setLoanForm({...loanForm, loanPhoto: file});
+        setLoanPhotoPreview(canvas.toDataURL('image/jpeg'));
+        stopLoanCamera();
+      }, 'image/jpeg', 0.95);
+    }
+  };
+
+  // fungsi untuk menutup kamera loan
+  const stopLoanCamera = () => {
+    if (loanStream) {
+      loanStream.getTracks().forEach(track => track.stop());
+      setLoanStream(null);
+    }
+    setShowLoanCamera(false);
+  };
+
   // fungsi untuk menangani upload foto pengembalian
   const handleReturnPhotoChange = (e) => {
     const file = e.target.files[0];
@@ -202,6 +251,45 @@ const LoanManagement = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // fungsi untuk membuka kamera return
+  const startReturnCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      setReturnStream(stream);
+      setShowReturnCamera(true);
+    } catch (error) {
+      toast.error('Tidak dapat mengakses kamera');
+      console.error('Error accessing camera:', error);
+    }
+  };
+
+  // fungsi untuk mengambil foto dari kamera return
+  const captureReturnPhoto = () => {
+    if (returnVideoRef) {
+      const canvas = document.createElement('canvas');
+      canvas.width = returnVideoRef.videoWidth;
+      canvas.height = returnVideoRef.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(returnVideoRef, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'return-photo.jpg', { type: 'image/jpeg' });
+        setReturnForm({...returnForm, returnPhoto: file});
+        setReturnPhotoPreview(canvas.toDataURL('image/jpeg'));
+        stopReturnCamera();
+      }, 'image/jpeg', 0.95);
+    }
+  };
+
+  // fungsi untuk menutup kamera return
+  const stopReturnCamera = () => {
+    if (returnStream) {
+      returnStream.getTracks().forEach(track => track.stop());
+      setReturnStream(null);
+    }
+    setShowReturnCamera(false);
   };
 
   // fungsi untuk membuat peminjaman
@@ -683,14 +771,67 @@ const LoanManagement = () => {
               <Col md={12}>
                 <Form.Group className="mb-3">
                   <Form.Label>Foto Asset Saat Dipinjam</Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLoanPhotoChange}
-                  />
+                  <div className="d-flex gap-2 mb-2">
+                    <Form.Control
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLoanPhotoChange}
+                      style={{ flex: 1 }}
+                    />
+                    <Button 
+                      variant="outline-primary" 
+                      onClick={startLoanCamera}
+                      disabled={showLoanCamera}
+                    >
+                      <i className="bi bi-camera"></i> Kamera
+                    </Button>
+                  </div>
                   <Form.Text className="text-muted">
                     Upload foto asset untuk dokumentasi (maks 5MB, format: JPG, PNG, GIF)
                   </Form.Text>
+                  
+                  {showLoanCamera && (
+                    <div className="mt-2">
+                      <video 
+                        ref={(ref) => {
+                          setLoanVideoRef(ref);
+                          if (ref && loanStream) {
+                            ref.srcObject = loanStream;
+                            ref.play().catch(err => {
+                              console.log('Play error:', err);
+                            });
+                          }
+                        }}
+                        autoPlay
+                        playsInline
+                        muted
+                        style={{ 
+                          width: '100%', 
+                          maxWidth: '400px',
+                          borderRadius: '8px',
+                          border: '2px solid #dee2e6'
+                        }}
+                      />
+                      <div className="mt-2">
+                        <Button 
+                          variant="success" 
+                          size="sm" 
+                          onClick={captureLoanPhoto}
+                          className="me-2"
+                        >
+                          <i className="bi bi-camera-fill"></i> Ambil Foto
+                        </Button>
+                        <Button 
+                          variant="secondary" 
+                          size="sm" 
+                          onClick={stopLoanCamera}
+                        >
+                          <i className="bi bi-x-circle"></i> Batal
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
                   {loanPhotoPreview && (
                     <div className="mt-2">
                       <img 
@@ -806,14 +947,67 @@ const LoanManagement = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>Foto Asset Saat Dikembalikan</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={handleReturnPhotoChange}
-              />
+              <div className="d-flex gap-2 mb-2">
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleReturnPhotoChange}
+                  style={{ flex: 1 }}
+                />
+                <Button 
+                  variant="outline-primary" 
+                  onClick={startReturnCamera}
+                  disabled={showReturnCamera}
+                >
+                  <i className="bi bi-camera"></i> Kamera
+                </Button>
+              </div>
               <Form.Text className="text-muted">
                 Upload foto asset untuk dokumentasi pengembalian (maks 5MB, format: JPG, PNG, GIF)
               </Form.Text>
+              
+              {showReturnCamera && (
+                <div className="mt-2">
+                  <video 
+                    ref={(ref) => {
+                      setReturnVideoRef(ref);
+                      if (ref && returnStream) {
+                        ref.srcObject = returnStream;
+                        ref.play().catch(err => {
+                          console.log('Play error:', err);
+                        });
+                      }
+                    }}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{ 
+                      width: '100%', 
+                      maxWidth: '400px',
+                      borderRadius: '8px',
+                      border: '2px solid #dee2e6'
+                    }}
+                  />
+                  <div className="mt-2">
+                    <Button 
+                      variant="success" 
+                      size="sm" 
+                      onClick={captureReturnPhoto}
+                      className="me-2"
+                    >
+                      <i className="bi bi-camera-fill"></i> Ambil Foto
+                    </Button>
+                    <Button 
+                      variant="secondary" 
+                      size="sm" 
+                      onClick={stopReturnCamera}
+                    >
+                      <i className="bi bi-x-circle"></i> Batal
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
               {returnPhotoPreview && (
                 <div className="mt-2">
                   <img 
