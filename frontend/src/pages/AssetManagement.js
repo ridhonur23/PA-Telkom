@@ -435,7 +435,7 @@ const AssetManagement = () => {
                     <option value="">Pilih Kategori</option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>
-                        {category.name} ({category.type === 'VEHICLE' ? 'Kendaraan' : 'Kunci Ruangan'})
+                        {category.name} ({category.type === 'VEHICLE' ? 'Kendaraan' : category.type === 'ROOM_KEY' ?  'Kunci Ruangan' : 'Perangkat'})
                       </option>
                     ))}
                   </Form.Select>
